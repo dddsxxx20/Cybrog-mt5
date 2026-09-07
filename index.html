@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBORG MT5 - VERCEL MASTERPIECE EDITION</title>
+    <style>
+        :root {
+            --bg-base: #f0f2f5; --bg-panel: #ffffff; --text-main: #000000; 
+            --text-muted: #555555; --black: #000000; --white: #ffffff;
+            --clr-sea-green: #2e7d32; --clr-tomato: #d32f2f; --clr-orange: #ed6c02; 
+        }
+        
+        * { box-sizing: border-box; user-select: none; }
+        body { margin: 0; padding: 0; background-color: var(--bg-base); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; height: 100vh; width: 100vw; display: flex; flex-direction: column; overflow: hidden; }
+
+        .topbar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); border-bottom: 1px solid #dcdcdc; padding: 10px 16px; min-height: 50px; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex-wrap: wrap; gap: 10px; }
+        .logo { font-size: 15px; font-weight: 800; color: var(--black); display: flex; align-items: center; gap: 10px; }
+        .hud-stats { display: flex; gap: 10px; font-size: 12px; font-weight: bold; align-items: center; flex-wrap: wrap; justify-content: center; }
+        .stat-box { display: flex; align-items: center; gap: 6px; color: var(--text-muted); }
+        .stat-val { color: var(--black); background: #eceff1; padding: 3px 8px; border-radius: 3px; }
+
+        .workspace { display: flex; flex: 1; height: calc(100vh - 50px); position: relative; width: 100%; overflow: hidden; }
+
+        /* 🔥 EXEC PANEL (LEFT) 🔥 */
+        .exec-panel { width: 280px; min-width: 280px; background: var(--bg-panel); border-right: 1px solid #dcdcdc; display: flex; flex-direction: column; padding: 14px; gap: 10px; overflow-y: auto; }
+        
+        /* 🔥 SIDEBAR (RIGHT) 🔥 */
+        .sidebar { width: 260px; min-width: 260px; background: var(--bg-panel); border-left: 1px solid #dcdcdc; display: flex; flex-direction: column; overflow-y: auto; }
+        
+        .sidebar-title { font-size: 11px; color: var(--text-muted); padding: 10px 14px; font-weight: 700; border-bottom: 1px solid #eee; background: #fafafa; letter-spacing: 0.5px; text-transform: uppercase; }
+        .settings-panel { padding: 12px 14px; border-bottom: 1px solid #eee; font-size: 11px; }
+        .input-group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+        .input-group label { font-weight: 600; color: var(--text-muted); font-size: 11px; }
+        .input-group input, .input-group select { width: 80px; padding: 4px; font-size: 11px; border: 1px solid #ccc; border-radius: 3px; text-align: center; font-weight: bold; }
+        
+        input[type="date"] { width: 120px !important; cursor: pointer; font-size: 10px !important; }
+
+        .btn-buy { background: #2e7d32; color: #fff; border: 1px solid #1b5e20; }
+        .btn-buy:hover { background: #1b5e20; }
+        .btn-sell { background: #d32f2f; color: #fff; border: 1px solid #b71c1c; }
+        .btn-sell:hover { background: #b71c1c; }
+        .btn-clear { background: #eceff1; color: #333; border: 1px solid #cfd8dc; }
+
+        .visibility-panel { padding: 12px 14px; font-size: 11px; }
+        .visibility-panel label { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; cursor: pointer; font-weight: 600; color: var(--text-muted); }
+
+        .note-card { background: #fffbe8; border-left: 3px solid #f59e0b; padding: 5px 8px; margin-top: 5px; border-radius: 2px; font-size: 10px; line-height: 1.3; }
+
+        /* MAIN CHART AREA */
+        .chart-area { flex: 1; display: flex; flex-direction: column; position: relative; background: #ffffff; overflow: hidden; border: 1px solid #cfd8dc; margin: 4px; border-radius: 4px; }
+        #svg-chart { width: 100%; height: 100%; cursor: crosshair; touch-action: none; background: #ffffff; }
+
+        .on-chart-dashboard { position: absolute; top: 10px; left: 10px; background: rgba(0, 0, 0, 0.88); color: #fff; padding: 10px 14px; border-radius: 4px; border: 1px solid #444; font-family: 'Consolas', 'Courier New', monospace; font-size: 11px; z-index: 50; pointer-events: none; width: 310px; max-width: 90%; }
+        .dash-title { color: #ffd700; font-weight: bold; border-bottom: 1px solid #444; padding-bottom: 4px; margin-bottom: 6px; font-size: 12px; text-align: center; }
+        .dash-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .dash-val-green { color: #4caf50; font-weight: bold; }
+        .dash-val-red { color: #f44336; font-weight: bold; }
+        .dash-val-cyan { color: #00e5ff; font-weight: bold; }
+        .dash-val-gold { color: #ffd700; font-weight: bold; }
+
+        .api-panel-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 4px; padding: 10px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px;}
+        .api-title { font-size: 11px; font-weight: 800; color: #15803d; text-align: center;}
+        
+        .csv-upload-group { display: flex; flex-direction: column; gap: 6px; background: #fafafa; padding: 10px; border: 1px dashed #b0bec5; border-radius: 4px; margin-bottom: 6px; }
+        .csv-upload-group label { font-size: 10px; font-weight: 700; color: #b71c1c; text-transform: uppercase; }
+        .csv-upload-group input[type="file"] { font-size: 10px; cursor: pointer; }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
+        .btn { padding: 9px; font-weight: bold; font-size: 11px; border: 1px solid #ccc; cursor: pointer; background: #fafafa; color: var(--black); border-radius: 3px; transition: 0.15s; }
+        .btn-play-group { display: flex; gap: 4px; }
+        .btn-step { background: #eceff1; border-color: #cfd8dc; flex: 1; font-size: 13px; }
+        .btn-play { background: #f57c00; color: #fff; flex: 2; font-size: 11px; border-color: #ef6c00; }
+        .btn-api-fetch { background: #15803d; color: #fff; border-color: #166534; font-size: 11px; padding: 10px; }
+        .btn-load-real { background: #102a43; color: var(--white); border-color: #000; font-size: 11px; padding: 9px; }
+
+        .timeline-container { background: #e0f2fe; padding: 10px; border: 1px solid #bae6fd; border-radius: 4px; display: flex; flex-direction: column; gap: 5px; }
+        .timeline-container label { font-size: 10px; font-weight: bold; color: #0284c7; text-align: center; }
+        .timeline-slider { width: 100%; cursor: pointer; }
+
+        .cb-bull { fill: #ffffff; stroke: #000000; stroke-width: 1px; shape-rendering: crispEdges; }
+        .cb-bear { fill: #000000; stroke: #000000; stroke-width: 1px; shape-rendering: crispEdges; }
+        .c-wick { stroke: #000000; stroke-width: 1px; shape-rendering: crispEdges; }
+        
+        .mt5-label { font-family: Arial, sans-serif; font-size: 9px; font-weight: 700; pointer-events: none; }
+        .date-axis-text { font-family: Arial, sans-serif; font-size: 8.5px; fill: #444; pointer-events: none; }
+        
+        .live-price-line { stroke: #666; stroke-width: 1; stroke-dasharray: 2,2; }
+        .live-price-bg { fill: #000; rx: 0; }
+        .live-price-text { fill: #fff; font-family: Arial, sans-serif; font-size: 10px; }
+        .drag-handle { cursor: ns-resize; pointer-events: all; }
+        .drag-handle:hover { stroke-width: 6; opacity: 0.7; }
+
+        /* MOBILE RESPONSIVE CSS */
+        @media (max-width: 900px) {
+            body { height: auto; overflow-y: auto; }
+            .workspace { flex-direction: column; height: auto; overflow: visible; }
+            .exec-panel { width: 100%; min-width: 100%; border-right: none; border-bottom: 2px solid #ccc; }
+            .chart-area { width: 100%; height: 60vh; min-height: 450px; margin: 0; border-radius: 0; border-left: none; border-right: none; }
+            .sidebar { width: 100%; min-width: 100%; border-left: none; border-top: 2px solid #ccc; }
+            .on-chart-dashboard { transform: scale(0.9); transform-origin: top left; }
+        }
+    </style>
+</head>
+<body onload="initDefaults()">
+
+    <div class="topbar">
+        <div class="logo">CYBORG MT5 <span style="background:#dcfce7; padding:2px 6px; border-radius:3px; font-size:11px; color:#15803d;">VERCEL MASTERPIECE EDITION</span></div>
+        <div class="hud-stats">
+            <div class="stat-box">SOURCE: <span class="stat-val" id="hud-mode">OFFLINE</span></div>
+            <div class="stat-box">DATA: <span class="stat-val" id="hud-data" style="color:#0284c7;">0 / 0</span></div>
+            <div class="stat-box">P&L: <span class="stat-val" id="hud-bal" style="color:#2e7d32;">$10,000.00</span></div>
+        </div>
+    </div>
+
+    <div class="workspace">
+        
+        <!-- 🔥 LEFT PANEL: API, CSV & TIMELINE 🔥 -->
+        <div class="exec-panel">
+            <div class="api-panel-box" style="background:#fffbf1; border-color:#fef08a;">
+                <div class="api-title" style="color:#a16207;">📅 1 TO 3 DAYS SELECTION</div>
+                <div class="input-group">
+                    <label>Start Date</label>
+                    <input type="date" id="inp-start-date" onchange="autoSetEndDate()">
+                </div>
+                <div class="input-group">
+                    <label>Difference</label>
+                    <select id="sel-days-diff" onchange="autoSetEndDate()" style="width: 120px;">
+                        <option value="1">1 Day (288 M5)</option>
+                        <option value="2">2 Days (576 M5)</option>
+                        <option value="3" selected>3 Days (864 M5)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>End Date</label>
+                    <input type="date" id="inp-end-date" readonly style="background:#f1f5f9; cursor:not-allowed;">
+                </div>
+            </div>
+
+            <div class="api-panel-box">
+                <div class="api-title">🌐 FETCH ONLINE API (FREE)</div>
+                <div class="input-group">
+                    <label>Asset</label>
+                    <select id="sel-online-asset" style="width: 140px;">
+                        <option value="PAXGUSDT">🏆 GOLD (PAXG/USDT)</option>
+                        <option value="BTCUSDT">🪙 BITCOIN (BTC)</option>
+                    </select>
+                </div>
+                <button class="btn btn-api-fetch" id="btn-fetch" onclick="fetchFreeOnlineData()">⚡ LOAD 1-3 DAYS (API)</button>
+            </div>
+
+            <div class="csv-upload-group">
+                <label>📁 OR OFFLINE CSV (MT5)</label>
+                <input type="file" id="csv-5m" accept=".csv">
+                <button class="btn btn-load-real" id="btn-real" onclick="loadCSVData()" style="margin-top: 4px;">📂 LOAD CSV FILE</button>
+            </div>
+            
+            <div class="control-group" style="margin-top: 10px;">
+                <div class="timeline-container">
+                    <label>⏪ REPLAY TIMELINE JUMPER ⏩</label>
+                    <input type="range" id="replay-slider" class="timeline-slider" min="0" max="100" value="0" oninput="jumpToCandle(this.value)">
+                </div>
+
+                <button class="btn" id="btn-speed" onclick="toggleSpeed()" style="margin-top: 5px;">⚡ SPEED: 1X (RELAXED)</button>
+                <div class="btn-play-group">
+                    <button class="btn btn-step" onclick="stepBackward()">⏪</button>
+                    <button class="btn btn-play" id="btn-play-pause" onclick="togglePlayPause()">⏸ PAUSE</button>
+                    <button class="btn btn-step" onclick="stepForward()">⏩</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🔥 CENTER PANEL: MAIN CHART 🔥 -->
+        <div class="chart-area" id="chart-container">
+            <div class="on-chart-dashboard" id="live-dashboard">
+                <div class="dash-title">🤖 6-SETUP RADAR ENGINE</div>
+                <div class="dash-row"><span>► Live Price:</span> <span id="dash-price" class="dash-val-cyan">0.00</span></div>
+                <div class="dash-row"><span>► Session VWAP:</span> <span id="dash-vwap">N/A</span></div>
+                <div class="dash-row"><span>► M5 Trend:</span> <span id="dash-trend">N/A</span></div>
+                
+                <div class="dash-row" style="margin-top:6px; border-top:1px dashed #444; padding-top:4px; color:#aaa;">[ MONITORED SETUPS ]</div>
+                <div class="dash-row"><span>1. Morning Hunt (Asian)</span> <span id="s1-stat">WAIT</span></div>
+                <div class="dash-row"><span>2. Deep Bounce (OTE)</span> <span id="s2-stat">WAIT</span></div>
+                <div class="dash-row"><span>3. Rocket (EQH/EQL)</span> <span id="s3-stat">WAIT</span></div>
+                <div class="dash-row"><span>4. Breakout Retest</span> <span id="s4-stat">WAIT</span></div>
+                <div class="dash-row"><span>5. Brahmāstra (POI)</span> <span id="s5-stat">WAIT</span></div>
+                <div class="dash-row"><span>6. Trend Rider (VWAP)</span> <span id="s6-stat">WAIT</span></div>
+            </div>
+
+            <svg id="svg-chart" viewBox="0 0 1600 620">
+                <g id="layer-dates"></g> 
+                <g id="layer-sessions"></g>
+                <g id="layer-poi-zones"></g> 
+                <g id="layer-vwap-paths"></g>
+                <g id="layer-structure"></g> 
+                <g id="layer-liquidity"></g> 
+                <g id="layer-m5fib"></g>
+                <g id="layer-volume"></g> 
+                <g id="layer-candles"></g>
+                <g id="layer-tool"></g>
+                <g id="layer-live-tracker"></g>
+            </svg>
+        </div>
+
+        <!-- 🔥 RIGHT PANEL: SETTINGS, ORDER PAD & NOTES 🔥 -->
+        <div class="sidebar">
+            <div class="sidebar-title">⚙️ TIME & FIB CONTROLS</div>
+            <div class="settings-panel">
+                <div class="input-group">
+                    <label>Time Offset (Hrs)</label>
+                    <input type="number" id="inp-time-offset" value="0" step="1" onchange="drawChart()">
+                </div>
+                <div class="input-group">
+                    <label>Discount Top</label>
+                    <input type="number" id="inp-fib-d-top" value="0.80" step="0.05" onchange="recalculateAll()">
+                </div>
+                <div class="input-group">
+                    <label>Discount Bot</label>
+                    <input type="number" id="inp-fib-d-bot" value="0.65" step="0.05" onchange="recalculateAll()">
+                </div>
+            </div>
+
+            <div class="sidebar-title">📝 TRADER'S JOURNAL NOTES</div>
+            <div class="settings-panel">
+                <textarea id="trader-note-input" placeholder="Enter trade reasons, psychological notes or setups..." style="width:100%; height:60px; font-size:10px; padding:6px; border:1px solid #ccc; border-radius:3px; resize:vertical; font-family:sans-serif;"></textarea>
+                <button class="btn" style="margin-top:5px; width:100%; background:#0284c7; color:#fff; padding:6px;" onclick="addNote()">💾 SAVE NOTE</button>
+                <div id="notes-container" style="margin-top:6px; max-height:110px; overflow-y:auto;"></div>
+            </div>
+
+            <div class="sidebar-title">💼 PRO EXECUTION PAD</div>
+            <div class="settings-panel">
+                <div class="input-group">
+                    <label>Lot Size</label>
+                    <input type="number" id="inp-lot" value="1.00" step="0.10" onkeyup="calcRisk()" onchange="calcRisk()">
+                </div>
+                <div class="input-group">
+                    <label>SL Points</label>
+                    <input type="number" id="inp-sl-pts" value="2.00" step="0.5" onkeyup="calcRisk()" onchange="calcRisk()">
+                </div>
+                <div class="input-group">
+                    <label>TP Points</label>
+                    <input type="number" id="inp-tp-pts" value="4.00" step="0.5" onkeyup="calcRisk()" onchange="calcRisk()">
+                </div>
+                <div class="input-group" style="border-top: 1px dashed #ccc; padding-top: 8px; margin-top: 6px;">
+                    <label style="color:#b71c1c;">Risk ($):</label>
+                    <span id="risk-val" style="font-weight:bold; font-family:monospace; color:#d32f2f;">-$200.00</span>
+                </div>
+                
+                <div style="display: flex; gap: 5px; margin-top: 10px;">
+                    <button class="btn btn-buy" style="flex:2;" onclick="placeProTool('LONG')">BUY</button>
+                    <button class="btn btn-sell" style="flex:2;" onclick="placeProTool('SHORT')">SELL</button>
+                    <button class="btn btn-clear" style="flex:1;" onclick="clearTool()" title="Clear">❌</button>
+                </div>
+            </div>
+            
+            <div class="sidebar-title">👁️ CHART ELEMENTS</div>
+            <div class="visibility-panel">
+                <label><input type="checkbox" id="v-struct" checked onchange="drawChart()"> 🔀 BOS & Sweep Lines</label>
+                <label><input type="checkbox" id="v-sess" checked onchange="drawChart()"> 🔲 Session Boxes (M5)</label>
+                <label><input type="checkbox" id="v-vwap" checked onchange="drawChart()"> 〰️ Session VWAP</label>
+                <label><input type="checkbox" id="v-eqhl" checked onchange="drawChart()"> 🎯 EQH & EQL Liquidity</label>
+                <label><input type="checkbox" id="v-htfpoi" checked onchange="drawChart()"> 🟣 1H POI (VWAP Trend)</label>
+                <label><input type="checkbox" id="v-m15poi" checked onchange="drawChart()"> 🟢 15m POI (VWAP Trend)</label>
+                <label><input type="checkbox" id="v-htfpoc" checked onchange="drawChart()"> 🧲 1H Volume POC Line</label>
+                <label><input type="checkbox" id="v-m5fib" checked onchange="drawChart()"> 📏 5m Discount OTE</label>
+                <label><input type="checkbox" id="v-vol" checked onchange="drawChart()"> 📊 Volume Bars (Tick)</label>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let config = { swingBars: 15, fdTop: 0.80, fdBot: 0.65 };
+
+        let state = { 
+            phase: 'IDLE', candles: [], h1Candles: [], sessions: [], structure: [], 
+            h1POI: [], h1POC: null, 
+            m15Candles: [], m15Buffer: [], m15POI: [], 
+            h1LastSH: null, h1LastSL: null, lastSH: null, lastSL: null, 
+            m5Fib: null, currentTrend: 0, eqh: null, eql: null, asianHigh: null, asianLow: null 
+        };
+        
+        let sessionDefinitions = [
+            { text: 'ASIAN', color: '#5bc0de', stroke: '#0288d1', length: 36 }, 
+            { text: 'LONDON', color: '#ff8a80', stroke: '#e91e63', length: 48 }, 
+            { text: 'NEW YORK', color: '#90a4ae', stroke: '#455a64', length: 50 }
+        ];
+        
+        let global5mData = []; 
+        let index5m = 0;
+        let globalSpeed = 1; 
+        let notesList = [];
+        
+        let zoomCount = 130; 
+        let currentMinP = 0, currentMaxP = 1; 
+        let accountBalance = 10000.00;
+
+        const SVG = document.getElementById('svg-chart');
+        let tool = { active: false, type: 'LONG', entryPrice: 0, tpPrice: 0, slPrice: 0, lot: 1.0, entryIdx: 0 };
+        let dragging = null;
+
+        function initDefaults() {
+            calcRisk();
+            let now = new Date();
+            now.setDate(now.getDate() - 4);
+            document.getElementById('inp-start-date').value = now.toISOString().split('T')[0];
+            autoSetEndDate();
+        }
+
+        function autoSetEndDate() {
+            let startVal = document.getElementById('inp-start-date').value;
+            if(!startVal) return;
+            let days = parseInt(document.getElementById('sel-days-diff').value) || 3;
+            let d = new Date(startVal);
+            d.setDate(d.getDate() + days);
+            document.getElementById('inp-end-date').value = d.toISOString().split('T')[0];
+        }
+
+        function addNote() {
+            let txt = document.getElementById('trader-note-input').value.trim();
+            if(!txt) return;
+            let timeStr = state.candles.length > 0 ? `${state.candles[state.candles.length-1].rawDate} ${state.candles[state.candles.length-1].rawTime}` : "General";
+            notesList.push({ time: timeStr, note: txt });
+            document.getElementById('trader-note-input').value = "";
+            renderNotes();
+        }
+
+        function renderNotes() {
+            let container = document.getElementById('notes-container');
+            container.innerHTML = "";
+            for(let i = notesList.length - 1; i >= 0; i--) {
+                let n = notesList[i];
+                container.innerHTML += `<div class="note-card"><b>[${n.time}]</b><br>${n.note}</div>`;
+            }
+        }
+
+        function recalculateAll() {
+            config.fdTop = parseFloat(document.getElementById('inp-fib-d-top').value) || 0.80;
+            config.fdBot = parseFloat(document.getElementById('inp-fib-d-bot').value) || 0.65;
+            if(state.candles.length > 0) {
+                state.structure = []; state.lastSH = null; state.lastSL = null; state.currentTrend = 0;
+                let tempC = [...state.candles]; state.candles = [];
+                for(let i=0; i<tempC.length; i++) { state.candles.push(tempC[i]); processM5Structure(); }
+                drawChart();
+            }
+        }
+
+        function calcRisk() {
+            let lot = parseFloat(document.getElementById('inp-lot').value) || 1.0;
+            let sl = parseFloat(document.getElementById('inp-sl-pts').value) || 2.0;
+            let risk = lot * sl * 100;
+            document.getElementById('risk-val').innerText = "-$" + risk.toFixed(2);
+            if(tool.active) {
+                let tp = parseFloat(document.getElementById('inp-tp-pts').value) || 4.0;
+                tool.lot = lot;
+                tool.slPrice = tool.type === 'LONG' ? tool.entryPrice - sl : tool.entryPrice + sl;
+                tool.tpPrice = tool.type === 'LONG' ? tool.entryPrice + tp : tool.entryPrice - tp;
+                drawChart();
+            }
+        }
+
+        function placeProTool(direction) {
+            if(state.candles.length === 0) { alert("⚠️ Load data first!"); return; }
+            tool.active = true; tool.type = direction; tool.entryIdx = state.candles.length - 1; tool.entryPrice = state.candles[tool.entryIdx].c;
+            let slOffset = parseFloat(document.getElementById('inp-sl-pts').value) || 2.0; let tpOffset = parseFloat(document.getElementById('inp-tp-pts').value) || 4.0;
+            tool.lot = parseFloat(document.getElementById('inp-lot').value) || 1.0;
+            tool.slPrice = direction === 'LONG' ? tool.entryPrice - slOffset : tool.entryPrice + slOffset;
+            tool.tpPrice = direction === 'LONG' ? tool.entryPrice + tpOffset : tool.entryPrice - tpOffset;
+            drawChart(); 
+        }
+
+        function clearTool() { tool.active = false; document.getElementById('layer-tool').innerHTML = ''; }
+
+        SVG.addEventListener('wheel', (e) => { e.preventDefault(); if(e.deltaY > 0) zoomCount = Math.min(1000, zoomCount * 1.15); else zoomCount = Math.max(30, zoomCount / 1.15); drawChart(); });
+        SVG.addEventListener('touchstart', (e) => { if(!tool.active) return; let touch = e.touches[0]; let target = document.elementFromPoint(touch.clientX, touch.clientY); if(target && target.classList.contains('drag-handle')) { dragging = target.getAttribute('data-drag'); e.preventDefault(); } }, {passive: false});
+        SVG.addEventListener('touchmove', (e) => { if(!dragging) return; e.preventDefault(); let touch = e.touches[0]; handleDrag(touch.clientY); }, {passive: false});
+        window.addEventListener('touchend', () => { dragging = null; });
+        SVG.addEventListener('mousedown', (e) => { if(!tool.active) return; if(e.target.classList.contains('drag-handle')) dragging = e.target.getAttribute('data-drag'); });
+        SVG.addEventListener('mousemove', (e) => { if(!dragging) return; handleDrag(e.clientY); });
+        window.addEventListener('mouseup', () => { dragging = null; });
+        window.addEventListener('resize', drawChart);
+
+        function handleDrag(clientY) {
+            let pt = SVG.createSVGPoint(); pt.x = 0; pt.y = clientY;
+            let cursorPt = pt.matrixTransform(SVG.getScreenCTM().inverse());
+            let price = currentMaxP - ((cursorPt.y - 20) / 480) * (currentMaxP - currentMinP); 
+            if(dragging === 'tp') { tool.tpPrice = price; document.getElementById('inp-tp-pts').value = Math.abs(tool.entryPrice - price).toFixed(2); }
+            else if(dragging === 'sl') { tool.slPrice = price; document.getElementById('inp-sl-pts').value = Math.abs(tool.entryPrice - price).toFixed(2); calcRisk(); }
+            drawChart();
+        }
+
+        function checkToolCollision() {
+            if(tool.active && state.candles.length > 0) {
+                let curr = state.candles[state.candles.length-1]; let hitTP = false; let hitSL = false;
+                if(tool.type === 'LONG') { if(curr.l <= tool.slPrice) hitSL = true; if(curr.h >= tool.tpPrice) hitTP = true; } 
+                else { if(curr.h >= tool.slPrice) hitSL = true; if(curr.l <= tool.tpPrice) hitTP = true; }
+                
+                if(hitSL || hitTP) {
+                    let pointValue = 100; let pnl = 0;
+                    if(tool.type === 'LONG') { pnl = hitTP ? (tool.tpPrice - tool.entryPrice) * tool.lot * pointValue : (tool.slPrice - tool.entryPrice) * tool.lot * pointValue; } 
+                    else { pnl = hitTP ? (tool.entryPrice - tool.tpPrice) * tool.lot * pointValue : (tool.entryPrice - tool.slPrice) * tool.lot * pointValue; }
+                    accountBalance += pnl;
+                    let balEl = document.getElementById('hud-bal');
+                    balEl.innerText = "$" + accountBalance.toFixed(2);
+                    balEl.style.color = accountBalance >= 10000 ? "#2e7d32" : "#d32f2f";
+                    clearTool(); 
+                }
+            }
+        }
+
+        function toggleSpeed() { if(globalSpeed === 1) globalSpeed = 2; else if(globalSpeed === 2) globalSpeed = 4; else if(globalSpeed === 4) globalSpeed = 10; else globalSpeed = 1; document.getElementById('btn-speed').innerText = '⚡ SPEED: ' + (globalSpeed === 10 ? 'MAX' : globalSpeed + 'X'); }
+        function togglePlayPause() { if(state.phase === 'RUNNING') { state.phase = 'PAUSED'; document.getElementById('btn-play-pause').innerText = "▶ PLAY"; } else if(state.phase === 'PAUSED' || state.phase === 'IDLE') { state.phase = 'RUNNING'; document.getElementById('btn-play-pause').innerText = "⏸ PAUSE"; runRealDataTick(); } }
+        function stepForward() { if(index5m < global5mData.length) { addM5CandleAndSyncH1(); processM5Structure(); checkToolCollision(); drawChart(); updateDataTracker(); } }
+        function stepBackward() { if(index5m > 0 && state.candles.length > 0) { state.candles.pop(); index5m--; state.structure = state.structure.filter(d => d.endIdx < state.candles.length); processM5Structure(); drawChart(); updateDataTracker(); } }
+
+        function jumpToCandle(newIndex) {
+            newIndex = parseInt(newIndex);
+            if(global5mData.length === 0 || newIndex < 0 || newIndex >= global5mData.length) return;
+            
+            index5m = 0;
+            state.candles = []; state.h1Candles = []; state.structure = []; state.sessions = [];
+            state.lastSH = null; state.lastSL = null; state.currentTrend = 0;
+            state.h1LastSH = null; state.h1LastSL = null; state.h1POI = []; state.h1POC = null;
+            state.m15Candles = []; state.m15Buffer = []; state.m15POI = [];
+            state.m5Fib = null; state.eqh = null; state.eql = null;
+            state.asianHigh = null; state.asianLow = null;
+
+            for(let i=0; i<=newIndex; i++) {
+                if(!addM5CandleAndSyncH1()) break;
+                processM5Structure();
+            }
+            
+            updateDataTracker();
+            drawChart();
+        }
+
+        async function fetchFreeOnlineData() {
+            let symbol = document.getElementById('sel-online-asset').value;
+            let startD = document.getElementById('inp-start-date').value;
+            let endD = document.getElementById('inp-end-date').value;
+            
+            if(!startD || !endD) return alert("Select Start Date first!");
+            
+            let btn = document.getElementById('btn-fetch');
+            btn.innerText = "⏳ FETCHING 1-3 DAYS..."; btn.disabled = true;
+
+            try {
+                let sTs = new Date(startD + "T00:00:00Z").getTime();
+                let eTs = new Date(endD + "T23:59:59Z").getTime();
+                
+                let urls = [
+                    `https://data-api.binance.vision/api/v3/klines?symbol=${symbol}&interval=5m&startTime=${sTs}&endTime=${eTs}&limit=1000`,
+                    `https://api1.binance.com/api/v3/klines?symbol=${symbol}&interval=5m&startTime=${sTs}&endTime=${eTs}&limit=1000`,
+                    `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=5m&startTime=${sTs}&endTime=${eTs}&limit=1000`
+                ];
+
+                let data = null;
+                for (let url of urls) {
+                    try {
+                        let res = await fetch(url);
+                        if (res.ok) { data = await res.json(); break; }
+                    } catch (e) { console.warn("Fallback to next URL..."); }
+                }
+
+                if (!data || data.length === 0) throw new Error("API Blocked or No Data found for these dates. Use VPN if in India.");
+
+                global5mData = data.map((d, i) => {
+                    let dt = new Date(d[0]);
+                    let rawDate = `${dt.getUTCFullYear()}.${(dt.getUTCMonth()+1).toString().padStart(2, '0')}.${dt.getUTCDate().toString().padStart(2, '0')}`;
+                    let rawTime = `${dt.getUTCHours().toString().padStart(2, '0')}:${dt.getUTCMinutes().toString().padStart(2, '0')}`;
+                    return { idx: i, rawDate: rawDate, rawTime: rawTime, realTs: d[0], o: parseFloat(d[1]), h: parseFloat(d[2]), l: parseFloat(d[3]), c: parseFloat(d[4]), v: parseFloat(d[5]) || 1 };
+                });
+
+                document.getElementById('hud-mode').innerText = symbol === 'PAXGUSDT' ? 'GOLD (PAXG)' : 'BTC/USDT';
+                initializeChartState();
+                btn.innerText = "⚡ LOAD 1-3 DAYS (API)"; btn.disabled = false;
+
+            } catch(e) {
+                alert("API Error: " + e.message);
+                btn.innerText = "⚡ LOAD 1-3 DAYS (API)"; btn.disabled = false;
+            }
+        }
+
+        function parseMT5CSV(file) {
+            return new Promise((resolve, reject) => {
+                let parseContent = (text) => {
+                    let cleanText = text.replace(/\0/g, '').replace(/^\uFEFF/, '');
+                    let lines = cleanText.split(/\r?\n/);
+                    let parsed = [];
+                    for(let i=0; i<lines.length; i++) { 
+                        let raw = lines[i].trim();
+                        if(!raw || raw.toUpperCase().includes('DATE') || raw.includes('<')) continue;
+                        let cols = raw.split(/[\t,;]+/).map(s => s.trim()).filter(s => s !== ''); 
+                        if(cols.length < 5) continue;
+                        
+                        let dateStr = cols[0]; let timeStr = cols[1] && cols[1].includes(':') ? cols[1] : "00:00"; let offset = cols[1] && cols[1].includes(':') ? 2 : 1;
+                        let dClean = dateStr.replace(/\//g, '.').replace(/-/g, '.'); let tClean = timeStr.length > 5 ? timeStr.substring(0, 5) : timeStr; 
+                        
+                        let dParts = dClean.split('.');
+                        let yyyy = dParts[0].length === 4 ? dParts[0] : dParts[2];
+                        let mm = dParts[1]; let dd = dParts[0].length === 4 ? dParts[2] : dParts[0];
+                        let realTs = new Date(`${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}T${tClean}:00Z`).getTime();
+
+                        let o = parseFloat(cols[offset]); let h = parseFloat(cols[offset+1]); let l = parseFloat(cols[offset+2]); let c = parseFloat(cols[offset+3]); let v = parseFloat(cols[offset+4]) || 1; 
+                        if(!isNaN(o) && !isNaN(c) && !isNaN(h) && !isNaN(l)) { parsed.push({ idx: parsed.length, rawDate: dClean, rawTime: tClean, realTs: realTs, o, h, l, c, v }); }
+                    }
+                    return parsed;
+                };
+
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    try { let text = e.target.result; if(text.includes('\x00')) { let r16 = new FileReader(); r16.onload = function(e16) { resolve(parseContent(e16.target.result)); }; r16.readAsText(file, 'UTF-16LE'); } else { resolve(parseContent(text)); } } catch(err) { reject(err); }
+                };
+                reader.readAsText(file, 'UTF-8');
+            });
+        }
+
+        function applyCSVDateFilter() {
+            let startD = document.getElementById('inp-start-date').value;
+            let endD = document.getElementById('inp-end-date').value;
+
+            if(endD) {
+                let eTs = new Date(endD + "T23:59:59Z").getTime();
+                global5mData = global5mData.filter(d => d.realTs <= eTs);
+            }
+
+            if(startD) {
+                let sTs = new Date(startD + "T00:00:00Z").getTime();
+                let startIdx = global5mData.findIndex(d => d.realTs >= sTs);
+                if(startIdx > 150) global5mData = global5mData.slice(startIdx - 150);
+                else if(startIdx !== -1) global5mData = global5mData.slice(0);
+            }
+            global5mData.forEach((c, i) => c.idx = i);
+        }
+
+        async function loadCSVData() {
+            let f5m = document.getElementById('csv-5m').files[0];
+            if(!f5m) return alert("Please select a 5M CSV file.");
+            let btn = document.getElementById('btn-real'); btn.innerText = "⏳ PROCESSING..."; btn.disabled = true;
+
+            try {
+                global5mData = await parseMT5CSV(f5m);
+                if(global5mData.length === 0) throw new Error("Empty file or unrecognized columns.");
+                
+                applyCSVDateFilter();
+                
+                document.getElementById('hud-mode').innerText = "OFFLINE CSV";
+                initializeChartState();
+                btn.innerText = "📂 LOAD CSV FILE"; btn.disabled = false;
+            } catch(e) {
+                alert("CSV Load Error: " + e.message);
+                btn.innerText = "📂 LOAD CSV FILE"; btn.disabled = false;
+            }
+        }
+
+        function initializeChartState() {
+            clearTool(); state.phase = 'IDLE';
+            index5m = 0;
+            state.candles = []; state.h1Candles = []; state.structure = []; state.sessions = [];
+            state.lastSH = null; state.lastSL = null; state.currentTrend = 0;
+            state.h1LastSH = null; state.h1LastSL = null; state.h1POI = []; state.h1POC = null;
+            state.m15Candles = []; state.m15Buffer = []; state.m15POI = [];
+            state.m5Fib = null; state.eqh = null; state.eql = null;
+
+            let slider = document.getElementById('replay-slider');
+            slider.max = global5mData.length - 1;
+            
+            let startJump = Math.min(60, global5mData.length - 1);
+            slider.value = startJump;
+            
+            for(let i=0; i<=startJump; i++) { if(!addM5CandleAndSyncH1()) break; processM5Structure(); } 
+            
+            updateDataTracker();
+            state.phase = 'RUNNING'; document.getElementById('btn-play-pause').innerText = "⏸ PAUSE"; 
+            runRealDataTick();
+        }
+
+        function updateDataTracker() { 
+            document.getElementById('hud-data').innerText = `${index5m} / ${global5mData.length}`; 
+            document.getElementById('replay-slider').value = index5m;
+        }
+
+        function calculateSessionVWAP(candleIndex) {
+            let currentSess = state.sessions.find(s => candleIndex >= s.startIdx && candleIndex <= s.endIdx);
+            let startIdx = currentSess ? currentSess.startIdx : 0;
+            let cumVol = 0; let cumVolPrice = 0;
+            for(let i = startIdx; i <= candleIndex; i++) {
+                let c = state.candles[i]; if(!c) continue;
+                let tp = (c.h + c.l + c.c) / 3.0; let vol = Math.max(1, c.v);
+                cumVol += vol; cumVolPrice += (tp * vol);
+            }
+            return cumVol > 0 ? (cumVolPrice / cumVol) : state.candles[candleIndex].c;
+        }
+
+        function addM5CandleAndSyncH1() {
+            if(index5m >= global5mData.length) return false;
+            let d5 = global5mData[index5m]; let curIdx = state.candles.length;
+            
+            let currentSess = state.sessions.length > 0 ? state.sessions[state.sessions.length-1] : null;
+            if (!currentSess || curIdx >= currentSess.endIdx) {
+                let nextIdx = currentSess ? (sessionDefinitions.findIndex(s => s.text === currentSess.text) + 1) % sessionDefinitions.length : 0;
+                let nextS = sessionDefinitions[nextIdx]; let sStart = currentSess ? currentSess.endIdx : 0;
+                state.sessions.push({ text: nextS.text, color: nextS.color, stroke: nextS.stroke, startIdx: sStart, endIdx: sStart + nextS.length });
+            }
+
+            state.candles.push({ idx: curIdx, rawDate: d5.rawDate, rawTime: d5.rawTime, o: d5.o, c: d5.c, h: d5.h, l: d5.l, v: d5.v, vwap: 0 });
+            state.candles[curIdx].vwap = calculateSessionVWAP(curIdx);
+            
+            state.m15Buffer.push(d5);
+            if(state.m15Buffer.length === 3) {
+                let h = Math.max(...state.m15Buffer.map(c=>c.h));
+                let l = Math.min(...state.m15Buffer.map(c=>c.l));
+                let v = state.m15Buffer.reduce((sum, c) => sum + c.v, 0);
+                state.m15Candles.push({ o: state.m15Buffer[0].o, h: h, l: l, c: state.m15Buffer[2].c, v: v });
+                state.m15Buffer = [];
+                updateM15Calculations();
+            }
+
+            if(index5m % 12 === 0 && index5m >= 12) {
+                let recent12 = global5mData.slice(index5m - 12, index5m);
+                let h1High = Math.max(...recent12.map(c=>c.h));
+                let h1Low = Math.min(...recent12.map(c=>c.l));
+                state.h1Candles.push({ o: recent12[0].o, h: h1High, l: h1Low, c: recent12[11].c, v: recent12.reduce((a, b) => a + b.v, 0) });
+                updateH1Levels();
+            }
+
+            index5m++;
+            return true;
+        }
+
+        function updateM15Calculations() {
+            let m15 = state.m15Candles; let len = m15.length;
+            if(len < 3) return;
+            state.m15POI = [];
+            for(let i = Math.max(0, len - 30); i <= len - 3; i++) {
+                if(m15[i].l > m15[i+2].h) state.m15POI.push({ type: 'DEMAND', top: m15[i].l, bot: m15[i+2].h, label: '15m Demand POI' });
+                if(m15[i].h < m15[i+2].l) state.m15POI.push({ type: 'SUPPLY', top: m15[i+2].l, bot: m15[i].h, label: '15m Supply POI' });
+            }
+        }
+
+        function updateH1Levels() {
+            let h1 = state.h1Candles; let len = h1.length; if(len < 3) return;
+            let sum = 0; let count = Math.min(10, len);
+            for(let k = len - count; k < len; k++) sum += h1[k].c;
+            state.h1POC = sum / count;
+
+            state.h1POI = [];
+            for(let i = Math.max(0, len - 20); i <= len - 3; i++) {
+                if(h1[i].l > h1[i+2].h) state.h1POI.push({ type: 'DEMAND', top: h1[i].l, bot: h1[i+2].h, label: 'H1 Demand POI' });
+                if(h1[i].h < h1[i+2].l) state.h1POI.push({ type: 'SUPPLY', top: h1[i+2].l, bot: h1[i].h, label: 'H1 Supply POI' });
+            }
+
+            for(let j = Math.max(2, len - 20); j < len; j++) {
+                if(h1[j-1].h > h1[j-2].h && h1[j-1].h > h1[j].h) state.h1LastSH = h1[j-1].h;
+                if(h1[j-1].l < h1[j-2].l && h1[j-1].l < h1[j].l) state.h1LastSL = h1[j-1].l;
+            }
+        }
+
+        function processM5Structure() {
+            let c = state.candles; let i = c.length - 1; if(i < 2) return;
+            let currentSH = null; let currentSL = null; let sb = config.swingBars; 
+            for(let j=Math.max(sb, i-40); j<=i; j++) {
+                let isH = true, isL = true;
+                for(let k=1; k<=sb; k++) { if(c[j-k] && c[j+k]) { if(c[j-k].h > c[j].h || c[j+k].h > c[j].h) isH = false; if(c[j-k].l < c[j].l || c[j+k].l < c[j].l) isL = false; } else { isH=false; isL=false; } }
+                if(isH) currentSH = { idx: j, price: c[j].h, active: true }; if(isL) currentSL = { idx: j, price: c[j].l, active: true }; 
+            }
+
+            if(currentSH && (!state.lastSH || currentSH.idx !== state.lastSH.idx)) state.lastSH = currentSH;
+            if(currentSL && (!state.lastSL || currentSL.idx !== state.lastSL.idx)) state.lastSL = currentSL;
+
+            if(state.lastSH && state.lastSL) {
+                let range = Math.abs(state.lastSH.price - state.lastSL.price); let minP = Math.min(state.lastSH.price, state.lastSL.price);
+                state.m5Fib = { dTop: minP + (range * (1 - config.fdTop)), dBot: minP + (range * (1 - config.fdBot)) };
+            }
+
+            let lastC = c[i];
+            if(state.lastSH && state.lastSH.active) {
+                if(lastC.c > state.lastSH.price) { state.structure.push({ startIdx: state.lastSH.idx, price: state.lastSH.price, endIdx: i, color: '#2e7d32', label: 'M5 BOS', type: 'bull' }); state.lastSH.active = false; state.currentTrend = 1; } 
+                else if (lastC.h > state.lastSH.price) { state.structure.push({ startIdx: state.lastSH.idx, price: state.lastSH.price, endIdx: i, color: '#ed6c02', label: 'Sweep', type: 'bull' }); state.lastSH.active = false; }
+            }
+            if(state.lastSL && state.lastSL.active) {
+                if(lastC.c < state.lastSL.price) { state.structure.push({ startIdx: state.lastSL.idx, price: state.lastSL.price, endIdx: i, color: '#d32f2f', label: 'M5 BOS', type: 'bear' }); state.lastSL.active = false; state.currentTrend = -1; } 
+                else if (lastC.l < state.lastSL.price) { state.structure.push({ startIdx: state.lastSL.idx, price: state.lastSL.price, endIdx: i, color: '#ed6c02', label: 'Sweep', type: 'bear' }); state.lastSL.active = false; }
+            }
+            if(state.structure.length > 8) state.structure.shift(); 
+            
+            let asianSessions = state.sessions.filter(s => s.text === 'ASIAN');
+            let latestAsian = asianSessions.length > 0 ? asianSessions[asianSessions.length - 1] : null;
+            if(latestAsian) {
+                let aStart = Math.max(0, latestAsian.startIdx); let aEnd = Math.min(latestAsian.endIdx, i);
+                let h=0, l=999999;
+                for(let k=aStart; k<=aEnd; k++) { if(c[k].h>h) h=c[k].h; if(c[k].l<l) l=c[k].l; }
+                state.asianHigh = h; state.asianLow = l;
+            }
+
+            updateLiveDashboard();
+        }
+
+        function updateLiveDashboard() {
+            if(state.candles.length === 0) return;
+            let lastC = state.candles[state.candles.length-1];
+            let prevC = state.candles.length > 1 ? state.candles[state.candles.length-2] : lastC;
+            
+            document.getElementById('dash-price').innerText = lastC.c.toFixed(3);
+            let trendStr = state.currentTrend === 1 ? "<span class='dash-val-green'>BULLISH 🚀</span>" : (state.currentTrend === -1 ? "<span class='dash-val-red'>BEARISH 🩸</span>" : "RANGING");
+            document.getElementById('dash-trend').innerHTML = trendStr;
+
+            let threshold = lastC.c * 0.0025; let wideThreshold = lastC.c * 0.0035; 
+            let vwapDist = Math.abs(lastC.c - lastC.vwap);
+            let vwapStr = lastC.c > lastC.vwap ? "<span class='dash-val-green'>PRICE > VWAP</span>" : "<span class='dash-val-red'>PRICE < VWAP</span>";
+            document.getElementById('dash-vwap').innerHTML = vwapStr;
+
+            let s1 = "WAIT";
+            if(state.asianHigh && state.asianLow) {
+                if(lastC.c > state.asianHigh && prevC.c <= state.asianHigh) s1 = "<span class='dash-val-red'>ASIAN HIGH SWEPT 🩸</span>";
+                else if(lastC.c < state.asianLow && prevC.c >= state.asianLow) s1 = "<span class='dash-val-green'>ASIAN LOW SWEPT 🚀</span>";
+                else if(Math.abs(lastC.c - state.asianHigh) < threshold) s1 = "<span class='dash-val-gold'>NEAR ASIAN HIGH</span>";
+                else if(Math.abs(lastC.c - state.asianLow) < threshold) s1 = "<span class='dash-val-gold'>NEAR ASIAN LOW</span>";
+            }
+            document.getElementById('s1-stat').innerHTML = s1;
+
+            let s2 = "WAIT";
+            if(state.m5Fib) {
+                let maxF = Math.max(state.m5Fib.dTop, state.m5Fib.dBot); let minF = Math.min(state.m5Fib.dTop, state.m5Fib.dBot);
+                if(lastC.c <= maxF && lastC.c >= minF) s2 = "<span class='dash-val-green'>IN DISCOUNT OTE 🚀</span>";
+            }
+            document.getElementById('s2-stat').innerHTML = s2;
+
+            let s3 = "WAIT";
+            if(state.h1LastSH && Math.abs(lastC.c - state.h1LastSH) < wideThreshold) s3 = "<span class='dash-val-cyan'>TARGETING EQH 🧲</span>";
+            else if(state.h1LastSL && Math.abs(lastC.c - state.h1LastSL) < wideThreshold) s3 = "<span class='dash-val-cyan'>TARGETING EQL 🧲</span>";
+            document.getElementById('s3-stat').innerHTML = s3;
+
+            let s4 = "WAIT";
+            if(state.structure.length > 0) {
+                let lastSt = state.structure[state.structure.length-1];
+                if(Math.abs(lastC.c - lastSt.price) < threshold && vwapDist < threshold) s4 = "<span class='dash-val-gold'>RETEST + VWAP 🎯</span>";
+            }
+            document.getElementById('s4-stat').innerHTML = s4;
+
+            let s5 = "WAIT";
+            let isVwapBull = lastC.c >= lastC.vwap;
+            let targetType = isVwapBull ? 'DEMAND' : 'SUPPLY';
+
+            let matchingH1 = state.h1POI.filter(p => p.type === targetType);
+            let latestH1 = matchingH1.length > 0 ? matchingH1[matchingH1.length - 1] : null;
+
+            let matchingM15 = state.m15POI.filter(p => p.type === targetType);
+            let latestM15 = matchingM15.length > 0 ? matchingM15[matchingM15.length - 1] : null;
+
+            let inH1 = latestH1 && (lastC.c <= latestH1.top && lastC.c >= latestH1.bot);
+            let inM15 = latestM15 && (lastC.c <= latestM15.top && lastC.c >= latestM15.bot);
+
+            if(inH1 && inM15) s5 = "<span class='dash-val-gold'>IN H1 & M15 POI 🧲</span>";
+            else if(inH1) s5 = targetType === 'DEMAND' ? "<span class='dash-val-green'>IN 1H DEMAND 🧲</span>" : "<span class='dash-val-red'>IN 1H SUPPLY 🧲</span>";
+            else if(inM15) s5 = targetType === 'DEMAND' ? "<span class='dash-val-green'>IN 15m DEMAND 🧲</span>" : "<span class='dash-val-red'>IN 15m SUPPLY 🧲</span>";
+            document.getElementById('s5-stat').innerHTML = s5;
+
+            let s6 = "WAIT";
+            if(vwapDist < threshold) {
+                if(state.currentTrend === 1 && prevC.l <= prevC.vwap && lastC.c > lastC.vwap) s6 = "<span class='dash-val-green'>VWAP BOUNCE 🚀</span>";
+                else if(state.currentTrend === -1 && prevC.h >= prevC.vwap && lastC.c < lastC.vwap) s6 = "<span class='dash-val-red'>VWAP REJECT 🩸</span>";
+            }
+            document.getElementById('s6-stat').innerHTML = s6;
+        }
+
+        function runRealDataTick() {
+            if(state.phase !== 'RUNNING') return; 
+            if(index5m >= global5mData.length) { state.phase = 'IDLE'; document.getElementById('btn-play-pause').innerText = "▶ PLAY"; return; }
+            if(!addM5CandleAndSyncH1()) { state.phase = 'IDLE'; document.getElementById('btn-play-pause').innerText = "▶ PLAY"; return; }
+            
+            processM5Structure(); checkToolCollision(); drawChart(); updateDataTracker();
+            
+            let delay = 4500; if(globalSpeed === 2) delay = 2200; else if(globalSpeed === 4) delay = 800; else if(globalSpeed === 10) delay = 150;
+            if(delay > 0) setTimeout(runRealDataTick, delay); else requestAnimationFrame(runRealDataTick);
+        }
+
+        function getAdjustedTime(rawTimeStr, offsetHours) {
+            if(offsetHours === 0 || !rawTimeStr.includes(':')) return rawTimeStr;
+            let parts = rawTimeStr.split(':'); let h = parseInt(parts[0]); let m = parts[1];
+            h = (h + offsetHours) % 24; if(h < 0) h += 24;
+            return (h < 10 ? "0" + h : h) + ":" + m;
+        }
+
+        function drawChart() {
+            if(state.candles.length === 0) return;
+            let sessHTML = ''; let vwapHTML = ''; let stHTML = ''; let liqHTML = ''; 
+            let fibHTML = ''; let volHTML = ''; let cHTML = ''; let dHTML = ''; let poiHTML = '';
+
+            let showStruct = document.getElementById('v-struct').checked;
+            let showSess = document.getElementById('v-sess').checked;
+            let showVwap = document.getElementById('v-vwap').checked;
+            let showEqhl = document.getElementById('v-eqhl').checked;
+            let showHtfPoi = document.getElementById('v-htfpoi').checked;     
+            let showM15Poi = document.getElementById('v-m15poi').checked;     
+            let showHtfPoc = document.getElementById('v-htfpoc').checked;     
+            let showM5Fib = document.getElementById('v-m5fib').checked;
+            let showVol = document.getElementById('v-vol').checked;
+
+            let timeOffset = parseInt(document.getElementById('inp-time-offset').value) || 0;
+
+            let paddingRightSlots = Math.floor(zoomCount * 0.12);
+            let renderStartIndex = Math.max(0, state.candles.length - (zoomCount - paddingRightSlots));
+            let renderEndIndex = state.candles.length - 1;
+            let visibleCandles = state.candles.slice(renderStartIndex, renderEndIndex + 1);
+            if(visibleCandles.length === 0) return;
+
+            let minP = Math.min(...visibleCandles.map(c => c.l)); let maxP = Math.max(...visibleCandles.map(c => c.h)); let pRange = maxP - minP || 1;
+            if(tool.active) {
+                if(tool.tpPrice > maxP) maxP = tool.tpPrice; if(tool.slPrice > maxP) maxP = tool.slPrice;
+                if(tool.tpPrice < minP) minP = tool.tpPrice; if(tool.slPrice < minP) minP = tool.slPrice;
+            }
+            minP -= pRange * 0.04; maxP += pRange * 0.04; currentMinP = minP; currentMaxP = maxP;
+
+            let candleWidth = document.getElementById('svg-chart').clientWidth / zoomCount; 
+            if(!candleWidth || candleWidth < 1) candleWidth = 1600 / zoomCount;
+            let bodyW = Math.max(1.5, candleWidth * 0.65);
+            
+            function getX(idx) { return (idx - renderStartIndex) * candleWidth; }
+            function getY(price) { return 520 - ((price - minP) / (maxP - minP)) * 500; } 
+
+            let lastC = state.candles[state.candles.length - 1];
+            let isVwapBull = lastC.c >= lastC.vwap;
+            let targetType = isVwapBull ? 'DEMAND' : 'SUPPLY';
+
+            if(showHtfPoi && state.h1POI.length > 0) {
+                let matchingH1 = state.h1POI.filter(p => p.type === targetType);
+                if(matchingH1.length > 0) {
+                    let poi = matchingH1[matchingH1.length - 1];
+                    let yT = getY(poi.top); let yB = getY(poi.bot); let h = Math.abs(yB - yT);
+                    let color = poi.type === 'DEMAND' ? '#2e7d32' : '#c62828';
+                    let fill = poi.type === 'DEMAND' ? 'rgba(46, 125, 50, 0.12)' : 'rgba(198, 40, 40, 0.12)';
+                    poiHTML += `<rect x="0" y="${Math.min(yT,yB)}" width="3000" height="${h}" fill="${fill}" stroke="${color}" stroke-width="1.5" stroke-dasharray="3,3"/>`;
+                    poiHTML += `<text x="500" y="${Math.min(yT,yB) + 12}" fill="${color}" class="mt5-label">LATEST ${poi.label} (${targetType})</text>`;
+                }
+            }
+
+            if(showM15Poi && state.m15POI.length > 0) {
+                let matchingM15 = state.m15POI.filter(p => p.type === targetType);
+                if(matchingM15.length > 0) {
+                    let poi = matchingM15[matchingM15.length - 1];
+                    let yT = getY(poi.top); let yB = getY(poi.bot); let h = Math.abs(yB - yT);
+                    let color = poi.type === 'DEMAND' ? '#388e3c' : '#e65100';
+                    let fill = poi.type === 'DEMAND' ? 'rgba(56, 142, 60, 0.12)' : 'rgba(230, 81, 0, 0.12)';
+                    poiHTML += `<rect x="0" y="${Math.min(yT,yB)}" width="3000" height="${h}" fill="${fill}" stroke="${color}" stroke-width="1.2" stroke-dasharray="2,2"/>`;
+                    poiHTML += `<text x="350" y="${Math.min(yT,yB) + 12}" fill="${color}" class="mt5-label">LATEST ${poi.label} (${targetType})</text>`;
+                }
+            }
+            document.getElementById('layer-poi-zones').innerHTML = poiHTML;
+
+            if(showSess) {
+                state.sessions.forEach(s => {
+                    let sStart = Math.max(s.startIdx, renderStartIndex); let sEnd = Math.min(s.endIdx, renderEndIndex);
+                    if(sStart > sEnd) return;
+                    let sMin = 9999999, sMax = -9999999;
+                    for(let i = s.startIdx; i <= Math.min(s.endIdx, state.candles.length-1); i++) {
+                        if(state.candles[i].l < sMin) sMin = state.candles[i].l; if(state.candles[i].h > sMax) sMax = state.candles[i].h;
+                    }
+                    if(sMin === 9999999) return;
+                    let sTopY = getY(sMax); let sBotY = getY(sMin); let startX = getX(s.startIdx); let endX = getX(s.endIdx) + candleWidth; let projX = endX + (30 * candleWidth);
+                    sessHTML += `<rect x="${startX}" y="${sTopY}" width="${endX - startX}" height="${Math.abs(sBotY - sTopY)}" fill="none" stroke="${s.stroke}" stroke-width="1.2" opacity="0.6"/>`;
+                    sessHTML += `<text x="${startX + 4}" y="${sTopY + 11}" class="mt5-label" fill="${s.stroke}" opacity="0.8">${s.text}</text>`;
+                    sessHTML += `<line x1="${endX}" y1="${sTopY}" x2="${projX}" y2="${sTopY}" stroke="${s.stroke}" stroke-dasharray="3,3" stroke-width="1" opacity="0.5"/>`;
+                    sessHTML += `<text x="${endX + 4}" y="${sTopY - 3}" class="mt5-label" fill="${s.stroke}" opacity="0.6">${s.text} MAX</text>`;
+                    sessHTML += `<line x1="${endX}" y1="${sBotY}" x2="${projX}" y2="${sBotY}" stroke="${s.stroke}" stroke-dasharray="3,3" stroke-width="1" opacity="0.5"/>`;
+                    sessHTML += `<text x="${endX + 4}" y="${sBotY + 10}" class="mt5-label" fill="${s.stroke}" opacity="0.6">${s.text} MIN</text>`;
+                });
+            }
+            document.getElementById('layer-sessions').innerHTML = sessHTML;
+
+            if(showVwap) {
+                state.sessions.forEach(sess => {
+                    let sStart = Math.max(sess.startIdx, renderStartIndex); let sEnd = Math.min(sess.endIdx, renderEndIndex);
+                    if(sStart > sEnd) return;
+                    let vPath = '';
+                    for(let k = sStart; k <= sEnd; k++) {
+                        let c = state.candles[k]; if(!c || !c.vwap) continue;
+                        let x = getX(c.idx); let y = getY(c.vwap);
+                        if(vPath === '') vPath += `M ${x} ${y} `; else vPath += `L ${x} ${y} `;
+                    }
+                    if(vPath !== '') vwapHTML += `<path d="${vPath}" fill="none" stroke="${sess.stroke}" stroke-width="1.4" stroke-dasharray="4,2" opacity="0.85" vector-effect="non-scaling-stroke"/>`;
+                });
+            }
+            document.getElementById('layer-vwap-paths').innerHTML = vwapHTML;
+
+            if(showStruct) {
+                state.structure.forEach(st => {
+                    if(st.endIdx >= renderStartIndex) {
+                        let y = getY(st.price); let startX = getX(st.startIdx); let endX = getX(st.endIdx);
+                        stHTML += `<line x1="${startX}" y1="${y}" x2="${endX}" y2="${y}" stroke="${st.color}" stroke-width="1.3" stroke-dasharray="3,2"/>`;
+                        let txtY = st.type === 'bear' ? y + 10 : y - 3; stHTML += `<text x="${startX + 2}" y="${txtY}" fill="${st.color}" class="mt5-label">${st.label}</text>`;
+                    }
+                });
+            }
+            document.getElementById('layer-structure').innerHTML = stHTML;
+
+            if(showEqhl) {
+                if(state.h1LastSH) {
+                    let y = getY(state.h1LastSH);
+                    liqHTML += `<line x1="0" y1="${y-2}" x2="3000" y2="${y-2}" stroke="#ff5722" stroke-width="1.2"/>`;
+                    liqHTML += `<line x1="0" y1="${y+2}" x2="3000" y2="${y+2}" stroke="#ff5722" stroke-width="1.2"/>`;
+                    liqHTML += `<text x="760" y="${y - 4}" fill="#ff5722" class="mt5-label">EQH LIQUIDITY (3)</text>`;
+                }
+                if(state.h1LastSL) {
+                    let y = getY(state.h1LastSL);
+                    liqHTML += `<rect x="0" y="${y}" width="3000" height="8" fill="rgba(0, 188, 212, 0.15)" stroke="#00bcd4" stroke-width="1"/>`;
+                    liqHTML += `<text x="760" y="${y + 16}" fill="#00bcd4" class="mt5-label">EQL LIQUIDITY (2)</text>`;
+                }
+            }
+            
+            if(showHtfPoc && state.h1POC) {
+                let y = getY(state.h1POC);
+                liqHTML += `<line x1="0" y1="${y}" x2="3000" y2="${y}" stroke="#9c27b0" stroke-width="2" stroke-dasharray="4,4"/>`;
+                liqHTML += `<text x="800" y="${y - 4}" fill="#9c27b0" class="mt5-label">1H VOLUME POC</text>`;
+            }
+            document.getElementById('layer-liquidity').innerHTML = liqHTML;
+
+            if(showM5Fib && state.m5Fib) {
+                let dTop = Math.min(getY(state.m5Fib.dTop), getY(state.m5Fib.dBot)); let dH = Math.abs(getY(state.m5Fib.dBot) - getY(state.m5Fib.dTop));
+                fibHTML += `<rect x="0" y="${dTop}" width="3000" height="${dH}" fill="rgba(46, 125, 50, 0.1)" stroke="#2e7d32" stroke-width="1" stroke-dasharray="4,4"/>`;
+                fibHTML += `<text x="360" y="${dTop - 4}" fill="#2e7d32" class="mt5-label">5m Discount OTE</text>`;
+            }
+            document.getElementById('layer-m5fib').innerHTML = fibHTML;
+
+            if(showVol) {
+                let maxVol = Math.max(...visibleCandles.map(c => c.v));
+                if(maxVol > 0) {
+                    visibleCandles.forEach(c => {
+                        let vH = (c.v / maxVol) * 55; let x = getX(c.idx);
+                        volHTML += `<line x1="${x}" y1="595" x2="${x}" y2="${595 - vH}" stroke="#2e7d32" stroke-width="1.2" shape-rendering="crispEdges"/>`;
+                    });
+                }
+            }
+            document.getElementById('layer-volume').innerHTML = volHTML;
+
+            let dateInterval = Math.max(1, Math.floor(zoomCount / 9));
+            for(let i=0; i<visibleCandles.length; i++) {
+                let c = visibleCandles[i]; let isBull = c.c >= c.o; let bClass = isBull ? 'cb-bull' : 'cb-bear'; 
+                let x = getX(c.idx); let yTop = getY(Math.max(c.o, c.c)); let yBot = getY(Math.min(c.o, c.c)); let h = Math.max(yBot - yTop, 1); 
+                cHTML += `<line x1="${x}" y1="${getY(c.h)}" x2="${x}" y2="${getY(c.l)}" class="c-wick"/>`;
+                cHTML += `<rect x="${x - bodyW/2}" y="${yTop}" width="${bodyW}" height="${h}" class="${bClass}"/>`;
+
+                if(i % dateInterval === 0 || i === visibleCandles.length - 1) {
+                    let dispTime = getAdjustedTime(c.rawTime, timeOffset);
+                    let dParts = c.rawDate.split('.');
+                    let dShort = dParts.length > 2 ? `${parseInt(dParts[2]) || dParts[0]} ${dispTime}` : `${c.rawDate} ${dispTime}`;
+                    dHTML += `<line x1="${x}" y1="598" x2="${x}" y2="603" stroke="#888" stroke-width="1"/>`;
+                    dHTML += `<text x="${x}" y="612" class="date-axis-text" text-anchor="middle">${dShort}</text>`;
+                }
+            }
+            document.getElementById('layer-candles').innerHTML = cHTML;
+            document.getElementById('layer-dates').innerHTML = dHTML;
+            
+            let liveY = getY(lastC.c);
+            let rightEdgeOffset = document.getElementById('svg-chart').clientWidth - 62;
+            if(rightEdgeOffset < 1400) rightEdgeOffset = 1538;
+
+            document.getElementById('layer-live-tracker').innerHTML = `
+                <line x1="0" y1="${liveY}" x2="3000" y2="${liveY}" class="live-price-line"/>
+                <rect x="${rightEdgeOffset}" y="${liveY-9}" width="62" height="18" class="live-price-bg"/>
+                <text x="${rightEdgeOffset + 4}" y="${liveY+4}" class="live-price-text">${lastC.c.toFixed(2)}</text>
+            `;
+            
+            if(tool.active) drawToolInner(getX, getY, rightEdgeOffset); else document.getElementById('layer-tool').innerHTML = '';
+        }
+
+        function drawToolInner(getX, getY, rightEdgeOffset) {
+            let rightEdge = 3000; 
+            let tY = getY(tool.tpPrice); 
+            let eY = getY(tool.entryPrice); 
+            let sY = getY(tool.slPrice);
+            
+            let tpBoxY = Math.min(eY, tY); let tpBoxH = Math.abs(eY - tY);
+            let slBoxY = Math.min(eY, sY); let slBoxH = Math.abs(eY - sY);
+            let startX = getX(tool.entryIdx);
+
+            let riskDist = Math.abs(tool.entryPrice - tool.slPrice); let rewDist = Math.abs(tool.entryPrice - tool.tpPrice);
+            let rrStr = riskDist > 0 ? (rewDist / riskDist).toFixed(2) : "0.00";
+
+            let html = `<line x1="${startX-10}" y1="${eY}" x2="${rightEdge}" y2="${eY}" stroke="#000" stroke-dasharray="2,2"/>`;
+
+            if(tool.type === 'LONG') {
+                html += `<rect x="${startX}" y="${tpBoxY}" width="${rightEdge-startX}" height="${tpBoxH}" fill="rgba(46, 125, 50, 0.08)"/>`;
+                html += `<line x1="${startX}" y1="${tY}" x2="${rightEdge}" y2="${tY}" stroke="#2e7d32" stroke-width="1.5" class="drag-handle" data-drag="tp"/>`;
+                html += `<text x="${startX + 14}" y="${tY - 4}" class="mt5-label" fill="#2e7d32">TP ${tool.tpPrice.toFixed(2)} (1:${rrStr})</text>`;
+
+                html += `<rect x="${startX}" y="${slBoxY}" width="${rightEdge-startX}" height="${slBoxH}" fill="rgba(211, 47, 47, 0.08)"/>`;
+                html += `<line x1="${startX}" y1="${sY}" x2="${rightEdge}" y2="${sY}" stroke="#d32f2f" stroke-width="1.5" class="drag-handle" data-drag="sl"/>`;
+                html += `<text x="${startX + 14}" y="${sY + 12}" class="mt5-label" fill="#d32f2f">SL ${tool.slPrice.toFixed(2)}</text>`;
+            } else {
+                html += `<rect x="${startX}" y="${slBoxY}" width="${rightEdge-startX}" height="${slBoxH}" fill="rgba(211, 47, 47, 0.08)"/>`;
+                html += `<line x1="${startX}" y1="${sY}" x2="${rightEdge}" y2="${sY}" stroke="#d32f2f" stroke-width="1.5" class="drag-handle" data-drag="sl"/>`;
+                html += `<text x="${startX + 14}" y="${sY - 4}" class="mt5-label" fill="#d32f2f">SL ${tool.slPrice.toFixed(2)}</text>`;
+
+                html += `<rect x="${startX}" y="${tpBoxY}" width="${rightEdge-startX}" height="${tpBoxH}" fill="rgba(46, 125, 50, 0.08)"/>`;
+                html += `<line x1="${startX}" y1="${tY}" x2="${rightEdge}" y2="${tY}" stroke="#2e7d32" stroke-width="1.5" class="drag-handle" data-drag="tp"/>`;
+                html += `<text x="${startX + 14}" y="${tY + 12}" class="mt5-label" fill="#2e7d32">TP ${tool.tpPrice.toFixed(2)} (1:${rrStr})</text>`;
+            }
+
+            document.getElementById('layer-tool').innerHTML = html;
+        }
+    </script>
+</body>
+</html>
